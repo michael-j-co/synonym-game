@@ -1,0 +1,149 @@
+{
+  "happy": {
+    "word": "happy",
+    "canonicalLemma": "happy",
+    "synonyms": [
+      { "term": "glad", "lemma": "glad", "tier": "common", "rarity": 0.18 },
+      { "term": "pleased", "lemma": "please", "tier": "common", "rarity": 0.29 },
+      { "term": "cheerful", "lemma": "cheerful", "tier": "uncommon", "rarity": 0.44 },
+      { "term": "contented", "lemma": "content", "tier": "uncommon", "rarity": 0.52 },
+      { "term": "delighted", "lemma": "delight", "tier": "uncommon", "rarity": 0.6 },
+      { "term": "merry", "lemma": "merry", "tier": "uncommon", "rarity": 0.66 },
+      { "term": "jubilant", "lemma": "jubilant", "tier": "rare", "rarity": 0.78 },
+      { "term": "ecstatic", "lemma": "ecstatic", "tier": "rare", "rarity": 0.86 },
+      { "term": "radiant", "lemma": "radiant", "tier": "rare", "rarity": 0.91 }
+    ]
+  },
+  "quick": {
+    "word": "quick",
+    "canonicalLemma": "quick",
+    "synonyms": [
+      { "term": "fast", "lemma": "fast", "tier": "common", "rarity": 0.19 },
+      { "term": "rapid", "lemma": "rapid", "tier": "common", "rarity": 0.33 },
+      { "term": "swift", "lemma": "swift", "tier": "uncommon", "rarity": 0.49 },
+      { "term": "speedy", "lemma": "speedy", "tier": "uncommon", "rarity": 0.57 },
+      { "term": "brisk", "lemma": "brisk", "tier": "uncommon", "rarity": 0.61 },
+      { "term": "prompt", "lemma": "prompt", "tier": "uncommon", "rarity": 0.64 },
+      { "term": "nimble", "lemma": "nimble", "tier": "rare", "rarity": 0.73 },
+      { "term": "fleet", "lemma": "fleet", "tier": "rare", "rarity": 0.82 },
+      { "term": "expeditious", "lemma": "expeditious", "tier": "rare", "rarity": 0.9 }
+    ]
+  },
+  "bright": {
+    "word": "bright",
+    "canonicalLemma": "bright",
+    "synonyms": [
+      { "term": "brilliant", "lemma": "brilliant", "tier": "common", "rarity": 0.32 },
+      { "term": "smart", "lemma": "smart", "tier": "common", "rarity": 0.35 },
+      { "term": "radiant", "lemma": "radiant", "tier": "uncommon", "rarity": 0.52 },
+      { "term": "luminous", "lemma": "luminous", "tier": "uncommon", "rarity": 0.58 },
+      { "term": "shiny", "lemma": "shiny", "tier": "uncommon", "rarity": 0.62 },
+      { "term": "gleaming", "lemma": "gleam", "tier": "rare", "rarity": 0.75 },
+      { "term": "dazzling", "lemma": "dazzle", "tier": "rare", "rarity": 0.82 },
+      { "term": "incandescent", "lemma": "incandesce", "tier": "rare", "rarity": 0.91 }
+    ]
+  },
+  "calm": {
+    "word": "calm",
+    "canonicalLemma": "calm",
+    "synonyms": [
+      { "term": "peaceful", "lemma": "peaceful", "tier": "common", "rarity": 0.3 },
+      { "term": "relaxed", "lemma": "relax", "tier": "common", "rarity": 0.36 },
+      { "term": "serene", "lemma": "serene", "tier": "uncommon", "rarity": 0.47 },
+      { "term": "tranquil", "lemma": "tranquil", "tier": "uncommon", "rarity": 0.56 },
+      { "term": "composed", "lemma": "compose", "tier": "uncommon", "rarity": 0.6 },
+      { "term": "placid", "lemma": "placid", "tier": "rare", "rarity": 0.72 },
+      { "term": "unruffled", "lemma": "unruffled", "tier": "rare", "rarity": 0.82 },
+      { "term": "equable", "lemma": "equable", "tier": "rare", "rarity": 0.88 }
+    ]
+  },
+  "strong": {
+    "word": "strong",
+    "canonicalLemma": "strong",
+    "synonyms": [
+      { "term": "powerful", "lemma": "powerful", "tier": "common", "rarity": 0.28 },
+      { "term": "sturdy", "lemma": "sturdy", "tier": "common", "rarity": 0.34 },
+      { "term": "tough", "lemma": "tough", "tier": "common", "rarity": 0.4 },
+      { "term": "robust", "lemma": "robust", "tier": "uncommon", "rarity": 0.52 },
+      { "term": "resilient", "lemma": "resilient", "tier": "uncommon", "rarity": 0.6 },
+      { "term": "vigorous", "lemma": "vigorous", "tier": "uncommon", "rarity": 0.64 },
+      { "term": "mighty", "lemma": "mighty", "tier": "rare", "rarity": 0.71 },
+      { "term": "forceful", "lemma": "forceful", "tier": "rare", "rarity": 0.82 },
+      { "term": "indomitable", "lemma": "indomitable", "tier": "rare", "rarity": 0.92 }
+    ]
+  },
+  "smart": {
+    "word": "smart",
+    "canonicalLemma": "smart",
+    "synonyms": [
+      { "term": "clever", "lemma": "clever", "tier": "common", "rarity": 0.26 },
+      { "term": "bright", "lemma": "bright", "tier": "common", "rarity": 0.34 },
+      { "term": "intelligent", "lemma": "intelligent", "tier": "common", "rarity": 0.42 },
+      { "term": "sharp", "lemma": "sharp", "tier": "uncommon", "rarity": 0.53 },
+      { "term": "astute", "lemma": "astute", "tier": "uncommon", "rarity": 0.6 },
+      { "term": "shrewd", "lemma": "shrewd", "tier": "uncommon", "rarity": 0.67 },
+      { "term": "savvy", "lemma": "savvy", "tier": "rare", "rarity": 0.75 },
+      { "term": "brainy", "lemma": "brainy", "tier": "rare", "rarity": 0.82 },
+      { "term": "perspicacious", "lemma": "perspicacious", "tier": "rare", "rarity": 0.93 }
+    ]
+  },
+  "brave": {
+    "word": "brave",
+    "canonicalLemma": "brave",
+    "synonyms": [
+      { "term": "bold", "lemma": "bold", "tier": "common", "rarity": 0.2 },
+      { "term": "courageous", "lemma": "courageous", "tier": "common", "rarity": 0.33 },
+      { "term": "fearless", "lemma": "fearless", "tier": "uncommon", "rarity": 0.54 },
+      { "term": "valiant", "lemma": "valiant", "tier": "uncommon", "rarity": 0.58 },
+      { "term": "daring", "lemma": "daring", "tier": "uncommon", "rarity": 0.62 },
+      { "term": "heroic", "lemma": "heroic", "tier": "uncommon", "rarity": 0.66 },
+      { "term": "gallant", "lemma": "gallant", "tier": "rare", "rarity": 0.78 },
+      { "term": "intrepid", "lemma": "intrepid", "tier": "rare", "rarity": 0.84 },
+      { "term": "stalwart", "lemma": "stalwart", "tier": "rare", "rarity": 0.9 }
+    ]
+  },
+  "gentle": {
+    "word": "gentle",
+    "canonicalLemma": "gentle",
+    "synonyms": [
+      { "term": "mild", "lemma": "mild", "tier": "common", "rarity": 0.24 },
+      { "term": "soft", "lemma": "soft", "tier": "common", "rarity": 0.3 },
+      { "term": "kind", "lemma": "kind", "tier": "common", "rarity": 0.33 },
+      { "term": "tender", "lemma": "tender", "tier": "uncommon", "rarity": 0.45 },
+      { "term": "lenient", "lemma": "lenient", "tier": "uncommon", "rarity": 0.56 },
+      { "term": "gentlehearted", "lemma": "gentlehearted", "tier": "rare", "rarity": 0.7 },
+      { "term": "soothing", "lemma": "soothe", "tier": "rare", "rarity": 0.76 },
+      { "term": "clement", "lemma": "clement", "tier": "rare", "rarity": 0.84 },
+      { "term": "sympathetic", "lemma": "sympathetic", "tier": "rare", "rarity": 0.88 }
+    ]
+  },
+  "lively": {
+    "word": "lively",
+    "canonicalLemma": "lively",
+    "synonyms": [
+      { "term": "energetic", "lemma": "energetic", "tier": "common", "rarity": 0.31 },
+      { "term": "spirited", "lemma": "spirit", "tier": "common", "rarity": 0.38 },
+      { "term": "animated", "lemma": "animate", "tier": "uncommon", "rarity": 0.46 },
+      { "term": "vibrant", "lemma": "vibrant", "tier": "uncommon", "rarity": 0.56 },
+      { "term": "peppy", "lemma": "peppy", "tier": "uncommon", "rarity": 0.63 },
+      { "term": "vivacious", "lemma": "vivacious", "tier": "rare", "rarity": 0.71 },
+      { "term": "dynamic", "lemma": "dynamic", "tier": "rare", "rarity": 0.76 },
+      { "term": "effervescent", "lemma": "effervesce", "tier": "rare", "rarity": 0.86 },
+      { "term": "sprightly", "lemma": "sprightly", "tier": "rare", "rarity": 0.9 }
+    ]
+  },
+  "sharp": {
+    "word": "sharp",
+    "canonicalLemma": "sharp",
+    "synonyms": [
+      { "term": "keen", "lemma": "keen", "tier": "common", "rarity": 0.28 },
+      { "term": "pointed", "lemma": "point", "tier": "common", "rarity": 0.35 },
+      { "term": "acute", "lemma": "acute", "tier": "uncommon", "rarity": 0.48 },
+      { "term": "incisive", "lemma": "incisive", "tier": "uncommon", "rarity": 0.56 },
+      { "term": "razorlike", "lemma": "razorlike", "tier": "rare", "rarity": 0.68 },
+      { "term": "trenchant", "lemma": "trenchant", "tier": "rare", "rarity": 0.79 },
+      { "term": "edged", "lemma": "edge", "tier": "rare", "rarity": 0.83 },
+      { "term": "punctilious", "lemma": "punctilious", "tier": "rare", "rarity": 0.89 }
+    ]
+  }
+}
