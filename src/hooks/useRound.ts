@@ -8,7 +8,6 @@ import type {
   SynonymEntry,
   SynonymPayload,
 } from '../types';
-import { useCountdown } from './useCountdown';
 
 type SubmissionFeedback =
   | {
@@ -28,11 +27,10 @@ type RoundData = {
   isLoading: boolean;
   error: string | null;
   lastFeedback: SubmissionFeedback | null;
+  completion: 'give-up' | 'all-found' | null;
 };
 
-const ROUND_DURATION_MS = 60_000;
-
-export function useRound(durationMs = ROUND_DURATION_MS) {
+export function useRound() {
   const [round, setRound] = useState<RoundData>({
     payload: null,
     found: [],
@@ -40,26 +38,72 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
     isLoading: false,
     error: null,
     lastFeedback: null,
+    completion: null,
   });
   const [roundId, setRoundId] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   const lookupRef = useRef<Map<string, SynonymEntry>>(new Map());
   const seenRef = useRef<Set<string>>(new Set());
   const previousWordRef = useRef<string | undefined>(undefined);
+  const startedAtRef = useRef<number | null>(null);
+  const timerRef = useRef<number | null>(null);
 
-  const handleExpire = useCallback(() => {
-    setRound((prev) => {
-      if (!prev.payload || prev.phase === 'ended') {
-        return prev;
-      }
-      return { ...prev, phase: 'ended', lastFeedback: null };
-    });
+  const stopTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
   }, []);
 
-  const { remainingMs, isActive, start, reset } = useCountdown({
-    durationMs,
-    onExpired: handleExpire,
-  });
+  const resetTimer = useCallback(() => {
+    stopTimer();
+    startedAtRef.current = null;
+    setElapsedMs(0);
+  }, [stopTimer]);
+
+  const freezeElapsed = useCallback(() => {
+    if (startedAtRef.current) {
+      setElapsedMs(Date.now() - startedAtRef.current);
+    }
+  }, []);
+
+  const startTimer = useCallback(() => {
+    if (startedAtRef.current) {
+      return;
+    }
+    startedAtRef.current = Date.now();
+    setElapsedMs(0);
+    timerRef.current = window.setInterval(() => {
+      if (!startedAtRef.current) {
+        return;
+      }
+      setElapsedMs(Date.now() - startedAtRef.current);
+    }, 100);
+    setRound((prev) => ({
+      ...prev,
+      phase: prev.phase === 'ready' ? 'running' : prev.phase,
+    }));
+  }, []);
+
+  const finalizeRound = useCallback(
+    (reason: 'give-up' | 'all-found') => {
+      freezeElapsed();
+      stopTimer();
+      setRound((prev) => {
+        if (prev.phase === 'ended' && prev.completion === reason) {
+          return prev;
+        }
+        return {
+          ...prev,
+          phase: 'ended',
+          completion: reason,
+          lastFeedback: reason === 'give-up' ? null : prev.lastFeedback,
+        };
+      });
+    },
+    [freezeElapsed, stopTimer],
+  );
 
   const loadRound = useCallback(async () => {
     setRound((prev) => ({
@@ -69,10 +113,11 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
       lastFeedback: null,
       phase: 'idle',
       found: [],
+      completion: null,
     }));
     lookupRef.current = new Map();
     seenRef.current = new Set();
-    reset();
+    resetTimer();
 
     try {
       const word = await fetchBaseWord(previousWordRef.current);
@@ -88,6 +133,7 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
         isLoading: false,
         error: null,
         lastFeedback: null,
+        completion: null,
       });
       setRoundId((prev) => prev + 1);
     } catch (err) {
@@ -98,16 +144,34 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
           err instanceof Error ? err.message : 'Unable to fetch a new round.',
       }));
     }
-  }, [reset]);
+  }, [resetTimer]);
 
   useEffect(() => {
     void loadRound();
   }, [loadRound]);
 
+  useEffect(
+    () => () => {
+      stopTimer();
+    },
+    [stopTimer],
+  );
+
+  const registerTyping = useCallback(() => {
+    if (round.phase === 'ended') {
+      return;
+    }
+    startTimer();
+  }, [round.phase, startTimer]);
+
   const submitAnswer = useCallback(
     (rawValue: string): SubmissionFeedback => {
       if (!round.payload) {
         return { status: 'invalid', message: 'Still loading next word.' };
+      }
+
+      if (!startedAtRef.current) {
+        startTimer();
       }
 
       const normalized = normalizeInput(rawValue);
@@ -156,20 +220,28 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
         term: normalizeHyphenation(rawValue.trim()),
       };
 
-      setRound((prev) => ({
-        ...prev,
-        phase: prev.phase === 'ready' ? 'running' : prev.phase,
-        found: [...prev.found, recorded],
-        lastFeedback: { status: 'accepted', entry: recorded, message: 'Nice!' },
-      }));
+      let shouldComplete = false;
 
-      if (round.phase === 'ready') {
-        start();
+      setRound((prev) => {
+        const updatedFound = [...prev.found, recorded];
+        if (prev.payload && updatedFound.length >= prev.payload.synonyms.length) {
+          shouldComplete = true;
+        }
+        return {
+          ...prev,
+          phase: prev.phase === 'ready' ? 'running' : prev.phase,
+          found: updatedFound,
+          lastFeedback: { status: 'accepted', entry: recorded, message: 'Nice!' },
+        };
+      });
+
+      if (shouldComplete) {
+        finalizeRound('all-found');
       }
 
       return { status: 'accepted', entry: recorded, message: 'Nice!' };
     },
-    [round.payload, round.phase, start],
+    [finalizeRound, round.payload, startTimer],
   );
 
   const missings = useMemo(() => {
@@ -190,6 +262,13 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
     void loadRound();
   }, [loadRound]);
 
+  const giveUp = useCallback(() => {
+    finalizeRound('give-up');
+  }, [finalizeRound]);
+
+  const totalAnswers = round.payload?.synonyms.length ?? 0;
+  const completedAll = round.phase === 'ended' && round.completion === 'all-found';
+
   return {
     roundId,
     phase: round.phase,
@@ -203,10 +282,13 @@ export function useRound(durationMs = ROUND_DURATION_MS) {
     playAgain,
     isLoading: round.isLoading,
     error: round.error,
-    remainingMs,
-    isTimerActive: isActive,
+    elapsedMs,
+    registerTyping,
+    giveUp,
+    completion: round.completion,
+    completedAll,
     missed: missings,
     notableMissed,
-    expectedAnswers: round.payload?.synonyms.length ?? 0,
+    expectedAnswers: totalAnswers,
   };
 }

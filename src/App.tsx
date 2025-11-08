@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { AnswerList } from './components/AnswerList';
 import { PlayerStats } from './components/PlayerStats';
 import { ResultsPanel } from './components/ResultsPanel';
@@ -34,22 +34,26 @@ function App() {
     playAgain,
     isLoading,
     error,
-    remainingMs,
+    elapsedMs,
     missed,
     notableMissed,
     expectedAnswers,
+    registerTyping,
+    giveUp,
+    completedAll,
   } = useRound();
 
-  const { bestScore, runs, avgScore, avgTerms, registerRun } = useLocalStore();
+  const { bestScore, runs, avgScore, avgTerms, avgTimeMs, fastestMs, registerRun } =
+    useLocalStore();
   const [inputValue, setInputValue] = useState('');
   const recordedRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (phase === 'ended' && roundId !== recordedRef.current) {
-      registerRun(score, found.length);
+      registerRun(score, found.length, elapsedMs);
       recordedRef.current = roundId;
     }
-  }, [found.length, phase, registerRun, roundId, score]);
+  }, [elapsedMs, found.length, phase, registerRun, roundId, score]);
 
   useEffect(() => {
     setInputValue('');
@@ -65,12 +69,19 @@ function App() {
     }
   };
 
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+    if (event.target.value) {
+      registerTyping();
+    }
+  };
+
   const statusMessage = error
     ? error
     : lastFeedback?.message ??
       (phase === 'ready'
-        ? 'Timer starts on your first correct answer.'
-        : 'Keep going!');
+        ? 'Clock starts the moment you begin typing.'
+        : 'Keep riffing until you clear the list or give up.');
 
   const statusTone = getStatusTone(
     error ? 'error' : lastFeedback?.status ?? undefined,
@@ -92,7 +103,7 @@ function App() {
       <main className="game-shell">
         <RoundHeader
           baseWord={baseWord}
-          remainingMs={remainingMs}
+          elapsedMs={elapsedMs}
           score={score}
           expectedAnswers={expectedAnswers}
           phase={phase}
@@ -112,12 +123,20 @@ function App() {
                   : 'keep them coming…'
               }
               value={inputValue}
-              onChange={(event) => setInputValue(event.target.value)}
+              onChange={handleInputChange}
               disabled={isInputDisabled}
               autoComplete="off"
             />
             <button type="submit" disabled={isInputDisabled}>
               Submit
+            </button>
+            <button
+              type="button"
+              className="secondary"
+              onClick={giveUp}
+              disabled={phase === 'ended'}
+            >
+              Give up
             </button>
           </div>
           <p className={`status ${statusTone}`}>{statusMessage}</p>
@@ -144,6 +163,8 @@ function App() {
             found={found}
             missed={missed}
             notableMissed={notableMissed}
+            elapsedMs={elapsedMs}
+            completedAll={completedAll}
             onReplay={playAgain}
           />
         )}
@@ -155,6 +176,8 @@ function App() {
           runs={runs}
           avgScore={avgScore}
           avgTerms={avgTerms}
+          avgTimeMs={avgTimeMs}
+          fastestMs={fastestMs}
         />
       </aside>
     </div>

@@ -67,6 +67,7 @@
 .input-row {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .submission-form input {
@@ -98,6 +99,17 @@
 .submission-form button:disabled {
   background: #cacaca;
   cursor: not-allowed;
+}
+
+.submission-form .secondary {
+  background: transparent;
+  border: 2px solid #d1d0cb;
+  color: #3a3a3a;
+}
+
+.submission-form .secondary:disabled {
+  border-color: #e2e1dc;
+  color: #b5b3ac;
 }
 
 .status {
@@ -199,6 +211,13 @@
   font-size: 2.2rem;
 }
 
+.results-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
 .results-panel button.primary {
   margin-top: 1rem;
   width: 100%;
@@ -228,7 +247,7 @@
 
 .player-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
   background: #ffffff;
   padding: 1.25rem;

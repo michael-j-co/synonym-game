@@ -1,4 +1,5 @@
 import { DEFAULT_POINTS } from '../lib/scoring';
+import { formatDuration } from '../lib/time';
 import type { FoundAnswer, SynonymEntry } from '../types';
 
 type ResultsPanelProps = {
@@ -7,6 +8,8 @@ type ResultsPanelProps = {
   found: FoundAnswer[];
   missed: SynonymEntry[];
   notableMissed: SynonymEntry[];
+  elapsedMs: number;
+  completedAll: boolean;
   onReplay: () => void;
 };
 
@@ -16,6 +19,8 @@ export function ResultsPanel({
   found,
   missed,
   notableMissed,
+  elapsedMs,
+  completedAll,
   onReplay,
 }: ResultsPanelProps) {
   return (
@@ -23,9 +28,20 @@ export function ResultsPanel({
       <p className="eyebrow">Round complete</p>
       <h2>{score} pts</h2>
       <p>
-        You found {found.length} / {found.length + missed.length} synonyms for{' '}
-        <strong>{baseWord}</strong>.
+        {completedAll ? 'Perfect sweep!' : 'Nice run!'} You found {found.length}{' '}
+        / {found.length + missed.length} synonyms for <strong>{baseWord}</strong>.
       </p>
+
+      <div className="results-meta">
+        <div>
+          <p className="eyebrow">Elapsed time</p>
+          <strong>{formatDuration(elapsedMs)}</strong>
+        </div>
+        <div>
+          <p className="eyebrow">Accepted answers</p>
+          <strong>{found.length}</strong>
+        </div>
+      </div>
 
       <div className="notable-missed">
         <h3>Top missed</h3>
@@ -41,7 +57,7 @@ export function ResultsPanel({
             ))}
           </ul>
         ) : (
-          <p>Perfect sweep! 🎉</p>
+          <p>All cleared. 🎉</p>
         )}
       </div>
 

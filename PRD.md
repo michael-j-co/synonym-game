@@ -21,7 +21,7 @@ A minimalistic word game where a player is shown a base word and tries to enter 
 * No difficulty selector (single balanced pool).
 * No multiplayer/async challenges.
 * No multi-language support (English only).
-
+  
 ---
 
 ## 2. Player Experience
@@ -30,9 +30,9 @@ A minimalistic word game where a player is shown a base word and tries to enter 
 
 1. Player lands on Home → presses **Play**.
 2. Sees a base word + empty input + list of accepted answers.
-3. On **first valid submission**, start a 60s timer.
+3. On the player’s **first keystroke**, start an upward timer that runs until they either give up or clear every synonym.
 4. Player continues submitting unique synonyms/near-synonyms.
-5. When time ends: show **Score**, **Answers found**, **Top missed**, and **Play Again**.
+5. When they give up or finish the list: show **Score**, **Elapsed Time**, **Answers found**, **Top missed**, and **Play Again**.
 
 **Feel**
 
@@ -56,8 +56,8 @@ A minimalistic word game where a player is shown a base word and tries to enter 
   * Optional: reject rare archaic/technical items if AI flags as “domain-specific only”.
 * **Timer**
 
-  * Length: 60s (configurable).
-  * Starts on first **valid** submission (not keystroke).
+  * No fixed length; chronometer starts on first **keystroke**.
+  * Runs indefinitely until the player gives up or finds every synonym.
 * **Scoring (Rarity-Based)**
 
   * AI service returns each synonym with a **rarity tier** or numeric rarity score.
@@ -156,7 +156,7 @@ POST /api/synonyms
   * 3–5 short bullets, examples of valid/invalid entries.
 * **Settings** (modal)
 
-  * Sound on/off (future), timer (read-only in MVP), dark mode.
+* Sound on/off (future), elapsed timer (read-only in MVP), dark mode.
 
 ### 5.2 Accessibility
 
@@ -209,7 +209,7 @@ POST /api/synonyms
 **State Machine (useRound)**
 
 * `idle` → `ready(wordLoaded)` → `running(timerActive)` → `ended(results)`
-* Transition `running` starts on **first valid submission**.
+* Transition `running` starts on the **first keystroke**.
 
 ---
 
@@ -274,7 +274,7 @@ total = Σ points(term)
 * Unit: `normalize`, `scoring`, `useRound`.
 * Contract tests: `/api/synonyms` schema.
 * E2E happy path: “type 5 known answers → score updates → results rendered”.
-* Edge cases: empty submit, duplicate, timer exact expiry, long words.
+* Edge cases: empty submit, duplicate, give-up mid-entry, long words.
 
 **Analytics (local/minimal)**
 
@@ -288,7 +288,7 @@ total = Σ points(term)
 * **Borderline terms** (e.g., “okay”, “fine” for “happy”): if not present in the canonical `synonyms[]`, they are treated as incorrect (0 points, not added to found).
 * **Inflections**: treat lemma duplicates as duplicates.
 * **Hyphenation**: accept “light-hearted”, reject multi-token with space.
-* **Timer zero**: allow answer if submitted before tick; lock input after.
+* **Timer state**: chronometer keeps counting upward until the player gives up or clears every synonym; freeze and display final time in results.
 * **Network fail**: show “Can’t fetch synonyms. Try again.” and retry; allow offline quick replay only if cached.
 
 ---
@@ -296,7 +296,7 @@ total = Σ points(term)
 ## 12) Acceptance Criteria (MVP)
 
 * I can complete a full round on desktop and mobile browsers with <1s initial load and <100ms input feedback for cached sets.
-* Timer starts only after my **first valid** answer.
+* Timer starts on my **first keystroke** and stops only when I give up or finish every synonym.
 * Duplicate entries (by lemma) are rejected with clear feedback.
 * Score reflects rarity tiers exactly (1/2/3).
 * Results screen shows found/missed and lets me replay instantly.

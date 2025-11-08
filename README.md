@@ -20,13 +20,13 @@ npm run dev
 src/
   components/        UI primitives (HUD, results, lists)
   data/              Word bank + mock synonym payloads
-  hooks/             `useRound` state machine + countdown timer
+  hooks/             `useRound` state machine + elapsed timer logic
   lib/               Normalization, scoring, mock AI client, tests
   state/             Local storage for per-device stats
   styles/            Global + feature styles
 ```
 
-The game loop lives in `hooks/useRound.ts` and mirrors the PRD state machine: `idle → ready → running → ended`, starting the countdown on the first accepted submission. Validation enforces single-word inputs, de-duplicates by lemma, and awards rarity-based points (1/2/3).
+The game loop lives in `hooks/useRound.ts` and mirrors the PRD state machine: `idle → ready → running → ended`, starting an upward chronometer on the player’s first keystroke and freezing it when they give up or clear the list. Validation enforces single-word inputs, de-duplicates by lemma, and awards rarity-based points (1/2/3).
 
 ## Mock Content / AI
 

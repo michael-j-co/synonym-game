@@ -5,6 +5,8 @@ interface StoredStats {
   totalScore: number;
   totalTerms: number;
   bestScore: number;
+  totalTimeMs: number;
+  fastestMs: number;
 }
 
 const STORAGE_KEY = 'synonym-game::stats';
@@ -14,6 +16,8 @@ const defaultStats: StoredStats = {
   totalScore: 0,
   totalTerms: 0,
   bestScore: 0,
+  totalTimeMs: 0,
+  fastestMs: 0,
 };
 
 export function useLocalStore() {
@@ -41,12 +45,18 @@ export function useLocalStore() {
   }, []);
 
   const registerRun = useCallback(
-    (score: number, terms: number) => {
+    (score: number, terms: number, durationMs: number) => {
+      const nextRuns = stats.runs + 1;
+      const nextTotalTime = stats.totalTimeMs + durationMs;
+      const nextFastest =
+        stats.fastestMs === 0 ? durationMs : Math.min(stats.fastestMs, durationMs);
       persist({
-        runs: stats.runs + 1,
+        runs: nextRuns,
         totalScore: stats.totalScore + score,
         totalTerms: stats.totalTerms + terms,
         bestScore: Math.max(stats.bestScore, score),
+        totalTimeMs: nextTotalTime,
+        fastestMs: nextFastest,
       });
     },
     [persist, stats],
@@ -60,6 +70,8 @@ export function useLocalStore() {
     avgTerms: stats.runs
       ? Number((stats.totalTerms / stats.runs).toFixed(1))
       : 0,
+    avgTimeMs: stats.runs ? Math.round(stats.totalTimeMs / stats.runs) : 0,
+    fastestMs: stats.fastestMs,
     registerRun,
   };
 }
