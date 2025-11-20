@@ -53,10 +53,6 @@
   font-weight: 600;
 }
 
-.timer.active {
-  color: #d35400;
-}
-
 .submission-form {
   margin-top: 2rem;
   display: flex;

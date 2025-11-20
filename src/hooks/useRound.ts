@@ -80,10 +80,14 @@ export function useRound() {
       }
       setElapsedMs(Date.now() - startedAtRef.current);
     }, 100);
-    setRound((prev) => ({
-      ...prev,
-      phase: prev.phase === 'ready' ? 'running' : prev.phase,
-    }));
+    setRound((prev) =>
+      prev.phase === 'ended'
+        ? prev
+        : {
+            ...prev,
+            phase: 'running',
+          },
+    );
   }, []);
 
   const finalizeRound = useCallback(
@@ -136,6 +140,7 @@ export function useRound() {
         completion: null,
       });
       setRoundId((prev) => prev + 1);
+      startTimer();
     } catch (err) {
       setRound((prev) => ({
         ...prev,
@@ -144,7 +149,7 @@ export function useRound() {
           err instanceof Error ? err.message : 'Unable to fetch a new round.',
       }));
     }
-  }, [resetTimer]);
+  }, [resetTimer, startTimer]);
 
   useEffect(() => {
     void loadRound();
@@ -220,13 +225,8 @@ export function useRound() {
         term: normalizeHyphenation(rawValue.trim()),
       };
 
-      let shouldComplete = false;
-
       setRound((prev) => {
         const updatedFound = [...prev.found, recorded];
-        if (prev.payload && updatedFound.length >= prev.payload.synonyms.length) {
-          shouldComplete = true;
-        }
         return {
           ...prev,
           phase: prev.phase === 'ready' ? 'running' : prev.phase,
@@ -235,7 +235,10 @@ export function useRound() {
         };
       });
 
-      if (shouldComplete) {
+      if (
+        round.payload &&
+        seenRef.current.size >= round.payload.synonyms.length
+      ) {
         finalizeRound('all-found');
       }
 

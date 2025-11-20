@@ -80,7 +80,7 @@ function App() {
     ? error
     : lastFeedback?.message ??
       (phase === 'ready'
-        ? 'Clock starts the moment you begin typing.'
+        ? 'Clock is already ticking—jump in with your best synonyms.'
         : 'Keep riffing until you clear the list or give up.');
 
   const statusTone = getStatusTone(
@@ -106,7 +106,6 @@ function App() {
           elapsedMs={elapsedMs}
           score={score}
           expectedAnswers={expectedAnswers}
-          phase={phase}
         />
 
         <form className="submission-form" onSubmit={handleSubmit}>

@@ -1,5 +1,6 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as aiClient from '../../lib/aiClient';
 import { useRound } from '../useRound';
 
 const mockPayload = {
@@ -11,57 +12,64 @@ const mockPayload = {
   ],
 };
 
-vi.mock('../../lib/aiClient', () => ({
-  fetchBaseWord: vi.fn(async () => 'happy'),
-  fetchSynonyms: vi.fn(async () => mockPayload),
-}));
-
 describe('useRound timer behavior', () => {
+  let baseWordSpy: ReturnType<typeof vi.spyOn>;
+  let synonymsSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+    baseWordSpy = vi
+      .spyOn(aiClient, 'fetchBaseWord')
+      .mockResolvedValue('happy');
+    synonymsSpy = vi
+      .spyOn(aiClient, 'fetchSynonyms')
+      .mockResolvedValue(mockPayload);
   });
 
   afterEach(() => {
     vi.clearAllTimers();
     vi.useRealTimers();
-    vi.clearAllMocks();
+    baseWordSpy.mockRestore();
+    synonymsSpy.mockRestore();
   });
 
-  it('starts the timer on first typing and does not reset on later keystrokes', async () => {
+  it('starts the timer as soon as a new round is ready', async () => {
     const { result } = renderHook(() => useRound());
-    await waitFor(() => expect(result.current.phase).toBe('ready'));
+    await act(async () => {});
+    expect(result.current.phase).toBe('running');
+
+    expect(result.current.elapsedMs).toBe(0);
 
     act(() => {
-      result.current.registerTyping();
+      vi.advanceTimersByTime(600);
     });
-
-    vi.advanceTimersByTime(600);
-    await waitFor(() => expect(result.current.elapsedMs).toBeGreaterThan(0));
+    expect(result.current.elapsedMs).toBeGreaterThan(0);
     const snapshot = result.current.elapsedMs;
 
     act(() => {
-      result.current.registerTyping();
+      vi.advanceTimersByTime(400);
     });
-    vi.advanceTimersByTime(400);
 
     expect(result.current.elapsedMs).toBeGreaterThan(snapshot);
   });
 
   it('freezes elapsed time when the player gives up', async () => {
     const { result } = renderHook(() => useRound());
-    await waitFor(() => expect(result.current.phase).toBe('ready'));
+    await act(async () => {});
+    expect(result.current.phase).toBe('running');
 
     act(() => {
-      result.current.registerTyping();
+      vi.advanceTimersByTime(1200);
     });
-    vi.advanceTimersByTime(1200);
     act(() => {
       result.current.giveUp();
     });
 
     const frozen = result.current.elapsedMs;
-    vi.advanceTimersByTime(2000);
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
 
     expect(result.current.elapsedMs).toBe(frozen);
     expect(result.current.phase).toBe('ended');
@@ -69,20 +77,20 @@ describe('useRound timer behavior', () => {
 
   it('auto-completes the round and stops the clock when every synonym is found', async () => {
     const { result } = renderHook(() => useRound());
-    await waitFor(() => expect(result.current.phase).toBe('ready'));
-
-    act(() => {
-      result.current.registerTyping();
-    });
+    await act(async () => {});
+    expect(result.current.phase).toBe('running');
 
     act(() => {
       result.current.submitAnswer('glad');
       result.current.submitAnswer('delighted');
     });
 
-    await waitFor(() => expect(result.current.completedAll).toBe(true));
+    await act(async () => {});
+    expect(result.current.completedAll).toBe(true);
     const frozen = result.current.elapsedMs;
-    vi.advanceTimersByTime(1000);
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
 
     expect(result.current.elapsedMs).toBe(frozen);
     expect(result.current.phase).toBe('ended');

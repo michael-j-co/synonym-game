@@ -1,12 +1,9 @@
 import { formatDuration } from '../lib/time';
-import type { RoundPhase } from '../types';
-
 type RoundHeaderProps = {
   baseWord: string;
   elapsedMs: number;
   score: number;
   expectedAnswers: number;
-  phase: RoundPhase;
 };
 
 export function RoundHeader({
@@ -14,10 +11,8 @@ export function RoundHeader({
   elapsedMs,
   score,
   expectedAnswers,
-  phase,
 }: RoundHeaderProps) {
-  const timerLabel =
-    phase === 'ready' && elapsedMs === 0 ? '0:00' : formatDuration(elapsedMs);
+  const timerLabel = formatDuration(elapsedMs);
   return (
     <header className="round-header">
       <div className="word-column">
@@ -27,9 +22,7 @@ export function RoundHeader({
       </div>
       <div className="stat">
         <p className="eyebrow">Elapsed time</p>
-        <div className={`timer ${phase !== 'ended' ? 'active' : ''}`}>
-          {timerLabel}
-        </div>
+        <div className="timer">{timerLabel}</div>
       </div>
       <div className="stat">
         <p className="eyebrow">Score</p>

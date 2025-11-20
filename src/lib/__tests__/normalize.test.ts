@@ -17,6 +17,6 @@ describe('toLemma', () => {
   });
 
   it('handles gerunds', () => {
-    expect(toLemma('running')).toBe('runn');
+    expect(toLemma('running')).toBe('run');
   });
 });
