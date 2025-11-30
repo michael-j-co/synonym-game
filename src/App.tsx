@@ -76,12 +76,6 @@ function App() {
     }
   };
 
-  const statusMessage = error
-    ? error
-    : lastFeedback?.message ??
-      (phase === 'ready'
-        ? 'Clock is already ticking—jump in with your best synonyms.'
-        : 'Keep riffing until you clear the list or give up.');
 
   const statusTone = getStatusTone(
     error ? 'error' : lastFeedback?.status ?? undefined,
@@ -106,6 +100,7 @@ function App() {
           elapsedMs={elapsedMs}
           score={score}
           expectedAnswers={expectedAnswers}
+          answersFound={found.length}
         />
 
         <form className="submission-form" onSubmit={handleSubmit}>
@@ -138,7 +133,6 @@ function App() {
               Give up
             </button>
           </div>
-          <p className={`status ${statusTone}`}>{statusMessage}</p>
         </form>
 
         <section>

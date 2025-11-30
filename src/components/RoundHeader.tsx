@@ -4,6 +4,7 @@ type RoundHeaderProps = {
   elapsedMs: number;
   score: number;
   expectedAnswers: number;
+  answersFound: number;
 };
 
 export function RoundHeader({
@@ -11,14 +12,18 @@ export function RoundHeader({
   elapsedMs,
   score,
   expectedAnswers,
+  answersFound,
 }: RoundHeaderProps) {
   const timerLabel = formatDuration(elapsedMs);
+  const totalLabel = expectedAnswers > 0 ? expectedAnswers : '—';
   return (
     <header className="round-header">
       <div className="word-column">
         <p className="eyebrow">Base word</p>
         <h1 className="word">{baseWord || '—'}</h1>
-        <p className="caption">{expectedAnswers} canonical answers</p>
+        <p className="caption">
+          {answersFound}/{totalLabel} answers found
+        </p>
       </div>
       <div className="stat">
         <p className="eyebrow">Elapsed time</p>
